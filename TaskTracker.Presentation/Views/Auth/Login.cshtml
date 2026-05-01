@@ -1,0 +1,139 @@
+@using TaskTracker.Domain.DTOs
+@model LoginDto
+
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giriş Yap</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/login.css">
+</head>
+
+<body>
+    <div class="d-flex min-vh-100 justify-content-center align-items-center">
+        
+        <div class="card shadow-lg login-card p-4">
+            
+            <h3 class="text-center mb-4 fw-bold">Giriş Yap</h3>
+            <div id="alert-message" class="alert alert-dismissible fade d-none" role="alert"></div>
+            <form id="loginForm">
+                
+                <div class="form-floating mb-3">
+                    <input type="text" asp-for="UsernameOrEmail" class="form-control" placeholder=" ">
+                    <label asp-for="UsernameOrEmail">Kullanıcı adı</label>
+                    <span asp-validation-for="UsernameOrEmail" class="text-danger small"></span>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <input type="password" asp-for="Password" id="Password" class="form-control" placeholder=" ">
+                    <label asp-for="Password">Şifre</label>
+                    <span asp-validation-for="Password" class="text-danger small"></span>
+                    <i id="togglePassword" 
+                        class="bi bi-eye position-absolute top-50 end-0 translate-middle-y me-3" 
+                        style="cursor:pointer;"></i>
+                </div>
+
+                <div class="d-flex justify-content-between mb-3">
+                    <div>
+                        <input type="checkbox" class="form-check-input" id="remember">
+                        <label for="remember" class="form-check-label">Beni hatırla</label>
+                    </div>
+                    <a href="#" class="small text-decoration-none">Şifremi unuttum</a>
+                </div>
+
+                <div class="d-grid mb-3">
+                    <button type="submit" class="btn btn-primary py-2">Giriş yap</button>
+                </div>
+
+            </form>
+
+            <div class="text-center">
+                <small>Hesabınız yok mu? <a href="@Url.Action("Register", "Auth")" class="fw-semibold text-decoration-none">Kayıt olun</a></small>
+            </div>
+
+        </div>
+
+    </div>
+    
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            $("#togglePassword").on('click', function() {
+                const passwordInput = $("#Password");
+                const type = passwordInput.attr('type') === 'password' ? 'text' : 'password'; 
+
+                passwordInput.attr('type', type);
+
+                $(this).toggleClass('bi-eye bi-eye-slash');
+            });
+
+            $('#loginForm').on('submit', function(e) {
+                e.preventDefault();
+
+                if (!$(this).valid()) return;
+
+                const button = $('button[type="submit"]');
+                button.attr('disabled', true).text("Giriş yapılıyor...");
+
+                const data = $(this).serialize();
+
+                $.ajax({
+                    url: '/Auth/Login',
+                    method: 'POST',
+                    data: data,
+                    success: function(response) {
+                        if (response.success) {
+                            $("#alert-message")
+                                .removeClass("d-none alert-danger show")
+                                .addClass("alert-success")
+                                .text(response.message)
+                            
+                            setTimeout(() => {
+                                $('#alert-message').addClass("show");
+                            }, 10);
+                            
+                            setTimeout(() => {
+                                window.location.href = '/Home/Index'
+                            }, 1500)
+                        } else {
+                            $('#alert-message')
+                                .removeClass('d-none alert-danger show')
+                                .addClass('alert-danger')
+                                .text(response.message);
+
+                                setTimeout(() => {
+                                    $('#alert-message').addClass("show");
+                                }, 10);
+
+                            button.attr('disabled', false).text("Giriş yap");
+                        }
+                    },
+                    error: function(xhr) {
+                        $('#alert-message')
+                            .removeClass('d-none alert-danger show')
+                            .addClass('alert-danger')
+                            .text("Beklenmedik bir hata oluştu.");
+
+                        setTimeout(() => {
+                            $('#alert-message').addClass("show");
+                        }, 10);
+
+                        button.attr('disabled', false).text("Giriş yap");
+                    },
+                });
+            });
+        });
+    </script>
+</body>
+</html>
