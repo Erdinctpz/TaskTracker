@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using TaskTracker.Domain.Entities;
 using TaskTracker.Persistence.Context;
 using TaskTracker.Presentation.Localization;
+using FluentValidation;
+using TaskTracker.Application.Validators;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +20,8 @@ builder.Services.AddControllersWithViews(options =>
 
     options.Filters.Add(new AuthorizeFilter(policy));
 });
+
+builder.Services.AddValidatorsFromAssemblyContaining<RegisterDtoValidator>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {

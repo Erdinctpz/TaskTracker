@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -15,7 +16,9 @@ namespace TaskTracker.Presentation.Controllers
     [AllowAnonymous]
     public class AuthController(
         UserManager<AppUser> userManager,
-        SignInManager<AppUser> signInManager
+        SignInManager<AppUser> signInManager,
+        IValidator<LoginDto> loginDtoValidator,
+        IValidator<RegisterDto> registerDtoValidator
     ) : Controller
     {
 
@@ -34,6 +37,17 @@ namespace TaskTracker.Presentation.Controllers
         [HttpPost]
         public async Task<IActionResult> RegisterAsync(RegisterDto registerDto)
         {
+            var validationResult = await registerDtoValidator.ValidateAsync(registerDto);
+            if (!validationResult.IsValid)
+            {
+                var errorMessage = validationResult.Errors.FirstOrDefault()?.ErrorMessage ?? "Kayıt olurken bir hata oluştu.";
+                return Json(new
+                {
+                    success = false,
+                    message = errorMessage
+                });
+            }
+
             var newUser = new AppUser
             {
                 FirstName = registerDto.FirstName,
@@ -46,7 +60,7 @@ namespace TaskTracker.Presentation.Controllers
 
             if (result.Succeeded)
             {
-                return Json( new
+                return Json(new
                 {
                     success = true,
                     message = "Kayıt başarılı, yönlendiriliyorsunuz..."
@@ -54,7 +68,7 @@ namespace TaskTracker.Presentation.Controllers
             }
 
             var errorMsg = result.Errors.FirstOrDefault()?.Description ?? "Kayıt olurken bir hata oluştu.";
-            return Json( new
+            return Json(new
             {
                 success = false,
                 message = errorMsg
@@ -64,6 +78,17 @@ namespace TaskTracker.Presentation.Controllers
         [HttpPost]
         public async Task<IActionResult> LoginAsync(LoginDto loginDto)
         {
+            var validationResult = await loginDtoValidator.ValidateAsync(loginDto);
+            if (!validationResult.IsValid)
+            {
+                var errorMsg = validationResult.Errors.FirstOrDefault()?.ErrorMessage ?? "Kayıt olurken bir hata oluştu.";
+                return Json(new
+                {
+                    success = false,
+                    message = errorMsg
+                });
+            }
+
             var user = await userManager.FindByEmailAsync(loginDto.UsernameOrEmail);
 
             if (user == null)
@@ -73,7 +98,7 @@ namespace TaskTracker.Presentation.Controllers
 
             if (user == null)
             {
-                return Json( new
+                return Json(new
                 {
                     success = false,
                     message = "Kullanıcı adı/Email veya şifre hatalı."
@@ -85,10 +110,10 @@ namespace TaskTracker.Presentation.Controllers
             if (result.Succeeded)
             {
                 await signInManager.SignInAsync(user, false);
-                return Json (new
+                return Json(new
                 {
-                   success = true,
-                   message = "Giriş yapılıyor..." 
+                    success = true,
+                    message = "Giriş yapılıyor..."
                 });
             }
 

@@ -24,7 +24,7 @@
             
             <h3 class="text-center mb-4 fw-bold">Yeni Hesap Oluştur</h3>
             <div id="alert-message" class="alert alert-dismissible fade show d-none" role="alert"></div>
-            <form id="registerForm">
+            <form id="registerForm" novalidate>
                 
                 <div class="row">
                     <div class="col-md-6 mb-3">
@@ -84,8 +84,6 @@
     </div>
     
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
@@ -104,8 +102,6 @@
             $('#registerForm').on('submit', function(e) {
                 e.preventDefault();
 
-                if (!$(this).valid()) return;
-
                 const button = $('button[type="submit"]');
                 button.attr('disabled', true).text("Hesap oluşturuluyor...");
 
@@ -118,11 +114,13 @@
                     success: function(response) {
                         if (response.success) {
                             $('#alert-message')
-                            .removeClass('alert-danger')
-                            .removeClass('d-none')
-                            .addClass('alert-success')
-                            .text("Kayıt başarılı. Yönlendiriliyorsunuz...")
-                            .fadeIn();
+                                .removeClass('d-none alert-danger show')
+                                .addClass('alert-success')
+                                .text(response.message);
+                            
+                            setTimeout(() => {
+                                $('#alert-message').addClass("show");
+                            }, 10);
 
                             setTimeout(() => {
                                 window.location.href = '/Auth/Login';
@@ -130,18 +128,24 @@
                         }
                         else {
                             $('#alert-message')
-                                .removeClass('d-none alert-success')
+                                .removeClass('d-none alert-success show')
                                 .addClass('alert-danger')
-                                .text(response.message)
-                                .fadeIn();
+                                .text(response.message);
+                            
+                            setTimeout(() => {
+                                $('#alert-message').addClass("show");
+                            }, 10);
                         }
                     },
                     error: function(xhr) {
                         $('#alert-message')
-                            .removeClass('d-none alert-success')
+                            .removeClass('d-none alert-success show')
                             .addClass('alert-danger')
                             .text("Beklenmedik bir hata oluştu.")
-                            .fadeIn();
+                        
+                        setTimeout(() => {
+                            $('#alert-message').addClass("show");
+                        }, 10);
                     },
                     complete: function() {
                         button.attr('disabled', false).text('Kayıt ol');

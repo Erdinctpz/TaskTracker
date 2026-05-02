@@ -23,7 +23,7 @@
             
             <h3 class="text-center mb-4 fw-bold">Giriş Yap</h3>
             <div id="alert-message" class="alert alert-dismissible fade d-none" role="alert"></div>
-            <form id="loginForm">
+            <form id="loginForm" novalidate>
                 
                 <div class="form-floating mb-3">
                     <input type="text" asp-for="UsernameOrEmail" class="form-control" placeholder=" ">
@@ -63,8 +63,6 @@
     </div>
     
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
@@ -80,8 +78,6 @@
 
             $('#loginForm').on('submit', function(e) {
                 e.preventDefault();
-
-                if (!$(this).valid()) return;
 
                 const button = $('button[type="submit"]');
                 button.attr('disabled', true).text("Giriş yapılıyor...");
@@ -106,7 +102,8 @@
                             setTimeout(() => {
                                 window.location.href = '/Home/Index'
                             }, 1500)
-                        } else {
+                        } 
+                        else {
                             $('#alert-message')
                                 .removeClass('d-none alert-danger show')
                                 .addClass('alert-danger')
