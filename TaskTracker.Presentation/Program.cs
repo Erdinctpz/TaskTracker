@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using TaskTracker.Domain.Entities;
 using TaskTracker.Persistence.Context;
 using TaskTracker.Presentation.Localization;
+using TaskTracker.Presentation.Middlewares;
 using FluentValidation;
 using TaskTracker.Application.Validators;
 
@@ -58,6 +59,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+app.UseMiddleware<ExceptionMiddleware>();
 app.UseHttpsRedirection();
 app.UseRouting();
 

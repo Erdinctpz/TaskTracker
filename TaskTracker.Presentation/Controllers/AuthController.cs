@@ -35,7 +35,7 @@ namespace TaskTracker.Presentation.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> RegisterAsync(RegisterDto registerDto)
+        public async Task<IActionResult> Register(RegisterDto registerDto)
         {
             var validationResult = await registerDtoValidator.ValidateAsync(registerDto);
             if (!validationResult.IsValid)
@@ -76,7 +76,7 @@ namespace TaskTracker.Presentation.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> LoginAsync(LoginDto loginDto)
+        public async Task<IActionResult> Login(LoginDto loginDto)
         {
             var validationResult = await loginDtoValidator.ValidateAsync(loginDto);
             if (!validationResult.IsValid)
@@ -125,7 +125,7 @@ namespace TaskTracker.Presentation.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> LogOutAsync()
+        public async Task<IActionResult> LogOut()
         {
             await signInManager.SignOutAsync();
             return RedirectToAction("Login", "Auth");

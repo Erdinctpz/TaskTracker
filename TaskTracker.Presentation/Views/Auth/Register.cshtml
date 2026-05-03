@@ -141,7 +141,7 @@
                         $('#alert-message')
                             .removeClass('d-none alert-success show')
                             .addClass('alert-danger')
-                            .text("Beklenmedik bir hata oluştu.")
+                            .text(xhr.responseJSON.message)
                         
                         setTimeout(() => {
                             $('#alert-message').addClass("show");
