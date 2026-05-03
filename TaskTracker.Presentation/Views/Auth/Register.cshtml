@@ -124,6 +124,7 @@
 
                             setTimeout(() => {
                                 window.location.href = '/Auth/Login';
+                                button.attr('disabled', false).text('Kayıt ol');
                             }, 1500);
                         }
                         else {
@@ -135,6 +136,8 @@
                             setTimeout(() => {
                                 $('#alert-message').addClass("show");
                             }, 10);
+
+                            button.attr('disabled', false).text('Kayıt ol');
                         }
                     },
                     error: function(xhr) {
@@ -146,8 +149,7 @@
                         setTimeout(() => {
                             $('#alert-message').addClass("show");
                         }, 10);
-                    },
-                    complete: function() {
+
                         button.attr('disabled', false).text('Kayıt ol');
                     }
                 });

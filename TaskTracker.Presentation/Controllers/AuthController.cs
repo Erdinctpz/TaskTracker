@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -18,7 +19,8 @@ namespace TaskTracker.Presentation.Controllers
         UserManager<AppUser> userManager,
         SignInManager<AppUser> signInManager,
         IValidator<LoginDto> loginDtoValidator,
-        IValidator<RegisterDto> registerDtoValidator
+        IValidator<RegisterDto> registerDtoValidator,
+        IMapper mapper
     ) : Controller
     {
 
@@ -48,13 +50,7 @@ namespace TaskTracker.Presentation.Controllers
                 });
             }
 
-            var newUser = new AppUser
-            {
-                FirstName = registerDto.FirstName,
-                LastName = registerDto.LastName,
-                UserName = registerDto.UserName,
-                Email = registerDto.Email,
-            };
+            var newUser = mapper.Map<AppUser>(registerDto);
 
             var result = await userManager.CreateAsync(newUser, registerDto.Password);
 

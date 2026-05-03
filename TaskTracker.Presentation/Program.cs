@@ -9,6 +9,7 @@ using TaskTracker.Presentation.Localization;
 using TaskTracker.Presentation.Middlewares;
 using FluentValidation;
 using TaskTracker.Application.Validators;
+using TaskTracker.Application.Mappers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +24,7 @@ builder.Services.AddControllersWithViews(options =>
 });
 
 builder.Services.AddValidatorsFromAssemblyContaining<RegisterDtoValidator>();
+builder.Services.AddAutoMapper(typeof(AuthProfile).Assembly);
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
