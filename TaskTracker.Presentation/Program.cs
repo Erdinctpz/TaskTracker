@@ -10,6 +10,10 @@ using TaskTracker.Presentation.Middlewares;
 using FluentValidation;
 using TaskTracker.Application.Validators;
 using TaskTracker.Application.Mappers;
+using TaskTracker.Application.Abstract;
+using TaskTracker.Application.Services;
+using Name;
+using TaskTracker.Persistence.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,6 +54,10 @@ builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Auth/Login";
 });
+
+builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+builder.Services.AddScoped<ITodoService, TodoService>();
+builder.Services.AddScoped<IGroupService, GroupService>();
 
 var app = builder.Build();
 

@@ -1,0 +1,57 @@
+<div class="modal fade" id="taskModal" tabindex="-1" aria-labelledby="taskModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title fw-bold" id="taskModalLabel">
+                    <i class="bi bi-pencil-square me-2"></i>Yeni Özel Görev
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <form id="taskForm" novalidate>
+                <input type="hidden" name="Type" value="1" >
+
+                <div class="modal-body p-4">
+                    <div class="mb-3">
+                        <label for="Title" class="form-label fw-semibold">Görev Başlığı</label>
+                        <input type="text" name="Title" id="Title" class="form-control" placeholder="Örn: Raporu tamamla" required>
+                        <span class="text-danger small" data-valmsg-for="Title"></span>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="Description" class="form-label fw-semibold">Açıklama</label>
+                        <textarea name="Description" id="Description" class="form-control" rows="3" placeholder="Görev detaylarını buraya yazabilirsin..."></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="TaskGroupId" class="form-label fw-semibold">Görev Grubu</label>
+                        <select name="TaskGroupId" id="TaskGroupId" class="form-select">
+                        </select>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="Priority" class="form-label fw-semibold">Öncelik</label>
+                            <select name="Priority" id="Priority" class="form-select">
+                                <option value="1">Düşük</option>
+                                <option value="2" selected>Orta</option>
+                                <option value="3">Yüksek</option>
+                                <option value="4">Acil</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="Deadline" class="form-label fw-semibold">Son Tarih</label>
+                            <input type="date" name="Deadline" id="Deadline" class="form-control" min="@DateTime.Now.ToString("yyyy-MM-dd")">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary shadow-sm" data-bs-dismiss="modal">Vazgeç</button>
+                    <button type="submit" class="btn btn-primary shadow-sm px-4">
+                        <i class="bi bi-save me-2"></i>Kaydet
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+

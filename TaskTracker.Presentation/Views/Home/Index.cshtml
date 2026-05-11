@@ -1,8 +1,136 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@using Microsoft.CodeAnalysis
+@{
+    ViewData["Title"] = "Görev Panosu";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+        <div>
+            <h2 class="fw-bold text-dark">Görevlerim</h2>
+            <p class="text-muted mb-0">Hoş geldin! Bugün yapman gerekenleri yönet.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <button class="btn btn-primary d-flex align-items-center shadow-sm" data-bs-toggle="modal" data-bs-target="#taskModal">
+                <i class="bi bi-plus-circle me-2"></i> Görev Oluştur
+            </button>
+            <button class="btn btn-success d-flex align-items-center shadow-sm" data-bs-toggle="modal" data-bs-target="#groupTaskModal">
+                <i class="bi bi-people me-2"></i> Grup Oluştur
+            </button>
+            <button class="btn btn-warning d-flex align-items-center shadow-sm" data-bs-toggle="modal" data-bs-target="#joinGroupModal">
+                <i class="bi bi-person-plus me-2"></i> Gruba Katıl
+            </button>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0 rounded-3 p-4">
+        <ul class="nav nav-tabs nav-fill mb-4" id="pills-tab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active fw-semibold" id="my-tasks-tab" data-bs-toggle="tab" data-bs-target="#myTasksContent" type="button" role="tab">
+                    <i class="bi bi-person-badge me-2"></i>Özel Görevler
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link fw-semibold" id="group-tasks-tab" data-bs-toggle="tab" data-bs-target="#groupTasksContent" type="button" role="tab">
+                    <i class="bi bi-collection me-2"></i>Gruplar
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="myTasksContent" role="tabpanel">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col" style="width: 50px;">#</th>
+                                <th scope="col">Başlık</th>
+                                <th scope="col">Öncelik</th>
+                                <th scope="col">Oluşturulma Tarihi</th>
+                                <th scope="col">Son Tarhi</th>
+                                <th scope="col" class="text-end">İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="groupTasksContent" role="tabpanel">
+                <div class="alert alert-info d-flex align-items-center border-0 shadow-sm mb-4">
+                    <i class="bi bi-info-circle-fill me-2"></i>
+                    Grup görevlerine katılmak için arkadaşlarınızın paylaştığı kodu kullanabilirsiniz.
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col" style="width: 50px;">#</th>
+                                <th scope="col">Başlık</th>
+                                <th scope="col">Grup Kodu</th>
+                                <th scope="col">Kişi Sayısı</th>
+                                <th scope="col">Son Tarih</th>
+                                <th scope="col" class="text-end">İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<div class="offcanvas offcanvas-end w-50" tabindex="-1" id="taskDetailsOffcanvas" aria-labelledby="taskDetailsLabel">
+    <div class="offcanvas-header bg-light border-bottom">
+        <h5 class="offcanvas-title fw-bold" id="taskDetailsLabel">
+            <i class="bi bi-info-circle me-2"></i>Görev Detayları
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Kapat"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div class="mb-4">
+            <label class="text-muted small d-block">Görev Başlığı</label>
+            <h4 id="infoTitle" class="fw-bold"></h4>
+        </div>
+        
+        <div class="mb-4">
+            <label class="text-muted small d-block">Açıklama</label>
+            <p id="infoDescription" class="lead fs-6 bg-light p-3 rounded border"></p>
+        </div>
+
+        <div class="row">
+            <div class="col-6 mb-3">
+                <label class="text-muted small d-block">Öncelik</label>
+                <div>
+                    <span id="infoPriority" class="badge"></span>
+                </div>
+            </div>
+            <div class="col-6 mb-3">
+                <label class="text-muted small d-block">Son Tarih</label>
+                <div id="infoDeadline" class="fw-semibold"></div>
+            </div>
+        </div>
+        
+        <hr>
+        
+        <div class="mt-3">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <label class="text-muted small d-block">Oluşturulma Tarihi</label>
+                    <span id="infoCreatedAt" class="text-secondary small"></span>
+                </div>
+                <div id="alert-message" class="alert">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    <span id="alert-text"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<partial name="Partials/_CreateTaskModal"></partial>
+
+@section Scripts {
+    <script src="~/js/task-management.js"></script>
+}
