@@ -21,19 +21,30 @@ namespace TaskTracker.Presentation.Middlewares
 
         private static Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
-            context.Response.ContentType = "application/json";
-            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
-            var response = new
+            bool isAjaxRequest = context.Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+            if (isAjaxRequest)
             {
-                success = false,
-                message = "Sunucu tarafında teknik bir hata oluştu.",
-            };
+                context.Response.ContentType = "application/json";
+                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
-            var jsonOptions = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
-            var result = JsonSerializer.Serialize(response, jsonOptions);
+                var response = new
+                {
+                    success = false,
+                    message = "Sunucu tarafında teknik bir hata oluştu.",
+                };
 
-            return context.Response.WriteAsync(result);
+                var jsonOptions = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+                var result = JsonSerializer.Serialize(response, jsonOptions);
+
+                return context.Response.WriteAsync(result);
+            }
+            else
+            {
+                context.Response.Redirect("/Home/Error");
+                return Task.CompletedTask;
+            }
+
         }
     }
 }

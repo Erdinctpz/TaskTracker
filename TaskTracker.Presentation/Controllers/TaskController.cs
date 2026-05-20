@@ -1,9 +1,11 @@
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TaskTracker.Application.Abstract;
 using TaskTracker.Application.DTOs;
+using TaskTracker.Domain;
 using TaskTracker.Domain.Entities;
 
 namespace TaskTracker.Presentation.Controllers
@@ -14,7 +16,8 @@ namespace TaskTracker.Presentation.Controllers
         ITodoService todoService
     ) : Controller
     {
-        public async Task<IActionResult> GetPrivateTasks()
+        [HttpGet]
+        public async Task<IActionResult> GetMyTasks()
         {
             var userId = userManager.GetUserId(User);
             if (userId == null)
@@ -22,23 +25,14 @@ namespace TaskTracker.Presentation.Controllers
                 return Unauthorized();
             }
 
-            var result = await todoService.GetAllAsync(userId);
+            var result = await todoService.GetAllAsync(x => x.UserId == userId && x.TaskGroupId == null);
 
-            if (result.IsSuccess)
+            if (!result.IsSuccess)
             {
-                return Json(new
-                {
-                    success = true,
-                    data = result.Data
-                });
+                return BadRequest(result.Message);
             }
 
-            return Json(new
-            {
-                success = false,
-                message = result.Message
-            });
-
+            return PartialView("~/Views/Home/Partials/_TaskList.cshtml", result.Data);
         }
 
         [HttpPost]

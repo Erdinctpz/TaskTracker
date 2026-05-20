@@ -15,10 +15,8 @@ namespace TaskTracker.Application.Services
         IValidator<CreateTaskDto> createTaskDtoValidator
     ) : ITodoService
     {
-        public async Task<Result<List<TaskDto>>> GetAllAsync(string userId)
+        public async Task<Result<List<TaskDto>>> GetAllAsync(Expression<Func<TodoItem, bool>>? predicate)
         {
-            Expression<Func<TodoItem, bool>>? predicate = x => x.UserId == userId;
-
             var taskList = await repository.GetAllAsync(predicate);
 
             var mappedList = mapper.Map<List<TaskDto>>(taskList);
